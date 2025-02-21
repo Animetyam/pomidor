@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pomodoro Timer</title>
+    <script>
+        let workTime = {{ session.get('work_time', 25) }};
+        let breakTime = {{ session.get('break_time', 5) }};
+        let timer;
+        let isWorkSession = true;
+
+        function startTimer() {
+            let timeLeft = isWorkSession ? workTime * 60 : breakTime * 60;
+            timer = setInterval(function() {
+                const minutes = Math.floor(timeLeft / 60);
+                const seconds = timeLeft % 60;
+                document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+                timeLeft--;
+
+                if (timeLeft < 0) {
+                    clearInterval(timer);
+                    playSound();
+                    isWorkSession = !isWorkSession;
+                    startTimer();
+                }
+            }, 1000);
+        }
+
+        function stopTimer() {
+            clearInterval(timer);
+            document.getElementById("timer").innerText = "Timer Stopped";
+        }
+
+        function playSound() {
+            const audio = new Audio('{{ url_for("static", filename="notification_sound.mp3") }}');
+            audio.play();
+            if (Notification.permission === "granted") {
+                new Notification("Pomodoro Timer", {
+                    body: isWorkSession ? "Work session is over!" : "Break is over!"
+                });
+            }
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            if (Notification.permission !== "granted") {
+                Notification.requestPermission();
+            }
+        });
+
+    </script>
+</head>
+<body>
+    <div id="container">
+        <h1>Pomodoro Timer</h1>
+        <h2 id="timer">Timer will show up here</h2>
+        <button onclick="startTimer()">Start</button>
+        <button onclick="stopTimer()">Stop</button>
+        <a href="{{ url_for('settings') }}">Settings</a> |
+        <a href="{{ url_for('profile') }}">Profile</a> | 
+        <a href="{{ url_for('logout') }}">Log out</a>
+    </div>
+</body>
+</html>

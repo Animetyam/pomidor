@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Profile</title>
+</head>
+<body>
+    <div id="container">
+        <h2>Profile</h2>
+        <form method="POST">
+            <label for="role">Select Role:</label>
+            <select name="role" required>
+                <option value="student" {% if current_role == 'student' %}selected{% endif %}>Student</option>
+                <option value="employee" {% if current_role == 'employee' %}selected{% endif %}>Employee</option>
+            </select>
+            <button type="submit">Update Role</button>
+        </form>
+        <a href="{{ url_for('index') }}">Back to Timer</a> | 
+        <a href="{{ url_for('logout') }}">Log out</a>
+    </div>
+</body>
+</html>
