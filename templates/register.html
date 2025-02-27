@@ -11,11 +11,15 @@
         <h2>Register</h2>
         <input type="text" name="username" placeholder="Username" required>
         <input type="password" name="password" placeholder="Password" required>
+        <input type="password" name="confirm_password" placeholder="Confirm Password" required>
         <select name="role" required>
             <option value="student">Student</option>
             <option value="employee">Employee</option>
         </select>
         <button type="submit">Register</button>
+        {% if error %}
+            <p style="color: red">{{ error }}</p>
+        {% endif %}
     </form>
     <a href="{{ url_for('login') }}">Login</a>
 </body>

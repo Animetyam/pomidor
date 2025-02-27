@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Pomodoro</title>
+    <script>
+        function redirectSettings() {
+            window.location.href = "{{ url_for('settings') }}";
+        }
+    </script>
+        <script>
+            function redirectIndex() {
+                window.location.href = "{{ url_for('index') }}";
+            }
+        </script>
+</head>
+<body>
+    <div style="display: flex;">
+        <div class="mode">
+            Low energy<br>
+            <button type="button" onclick="redirectIndex()">Start</button>
+        </div>
+        <div class="mode">
+            Full energy<br>
+            <button type="button" onclick="redirectIndex()">Start</button>
+        </div>
+        <div class="mode">
+            Custom timer<br>
+            <button type="button" onclick="redirectSettings()">Edit custom timer</button>
+        </div>
+    </div>
+</body>

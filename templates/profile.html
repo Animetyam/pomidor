@@ -5,10 +5,18 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Profile</title>
+    <script>
+        function redirectToProfSettings() {
+            window.location.href = "{{ url_for('prof_settings') }}";
+        }
+    </script>
 </head>
 <body>
     <div id="container">
         <h2>Profile</h2>
+        <img src="static/profilePictures/{{ session.get('profile_pic') }}" alt="profPic" class="profPic">
+        <p>{{session.get('about_me')}}</p>
+        <button type="button" onclick="redirectToProfSettings()">Edit profile</button>
         <form method="POST">
             <label for="role">Select Role:</label>
             <select name="role" required>
@@ -17,6 +25,28 @@
             </select>
             <button type="submit">Update Role</button>
         </form>
+        <h3>Achivments</h3>
+        <p>Your highest streak: {{session.get('profile_stats')['max_streak']}}</p>
+        <div class="achivments">
+            <img src="static/achivments/start.png" alt="achivka" class="achivka" {% if session.get('profile_xp', 0) >= 1 %}style="opacity: 1;  border: 5px solid #ffd700;"{% endif %}>
+            <div class="opisanie_achivki">
+                Good start<br>Reach level 1
+            </div>
+            <img src="static/achivments/lvl5.png" alt="achivka" class="achivka" {% if session.get('profile_xp', 0) >= 5 %}style="opacity: 1;  border: 5px solid #ffd700;"{% endif %}>
+            <div class="opisanie_achivki">
+                Level 5 Mastery<br>Reach level 5
+            </div>
+        </div>
+        <div class="achivments">
+            <img src="static/achivments/lvl10.png" alt="achivka" class="achivka" {% if session.get('profile_stats')['max_streak'] >= 10 %}style="opacity: 1;  border: 5px solid #ffd700;"{% endif %}>
+            <div class="opisanie_achivki">
+                Peak Performance<br>Achieve a streak of 10 work sessions in a row
+            </div>
+            <img src="static/achivments/champion.png" alt="achivka" class="achivka" {% if session.get('profile_xp', 0) >= 1000 %}style="opacity: 1;  border: 5px solid #ffd700;"{% endif %}>
+            <div class="opisanie_achivki">
+                Champion<br>Take the top spot in the ranking
+            </div>
+        </div>
         <a href="{{ url_for('index') }}">Back to Timer</a> | 
         <a href="{{ url_for('logout') }}">Log out</a>
     </div>
