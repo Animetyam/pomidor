@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Profile</title>
+    <script>
+        function redirectToProfSettings() {
+            window.location.href = "{{ url_for('prof_settings') }}";
+        }
+    </script>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="{{ url_for('index') }}" class="nav-link">Back to Timer</a>
+        <div class="logout-section">
+            <a href="{{ url_for('profile') }}">
+                <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+                    alt="Profile Picture" class="profile-icon">
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">
+                <i class="fas fa-door-open"></i> Log out
+            </a>
+        </div>
+    </header>
+
+    <div id="container">
+        <h2>Profile</h2>
+        <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+            alt="profPic" class="profPic">
+        <p>{{ session.get('about_me') }}</p>
+        <button type="button" onclick="redirectToProfSettings()">Edit profile</button>
+        <form method="POST" class="role_form">
+            <label for="role">Select Role:</label>
+            <select name="role" required style="width: 150px">
+                <option value="student" {% if current_role=='student' %}selected{% endif %}>Student</option>
+                <option value="employee" {% if current_role=='employee' %}selected{% endif %}>Employee</option>
+            </select>
+            <button type="submit">Update Role</button>
+        </form>
+
+        <div class="achievements-section">
+            <h3>Achivments</h3>
+            <div class="achievements-grid">
+                <div class="achievement-card">
+                    <img src="https://img.icons8.com/ios/452/star.png" alt="achivka" class="achievement-icon" {% if
+                        session.get('profile_xp', 0)>= 1 %}style="opacity: 1; border: 5px
+                    solid #ffd700;"{% endif %}>
+                    <p>Good Start<br>Reach level 1</p>
+                </div>
+                <div class="achievement-card">
+                    <img src="https://img.icons8.com/ios/452/5-stars.png" alt="achivka" class="achievement-icon" {% if
+                        session.get('profile_xp', 0)>= 5 %}style="opacity: 1; border: 5px
+                    solid #ffd700;"{% endif %}>
+                    <p>Peak Performance<br>Achieve a streak of 10 work sessions in a row</p>
+                </div>
+                <div class="achievement-card">
+                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}style="opacity: 1; border: 5px
+                    solid #ffd700;"{% endif %}>
+                    <p>Champion<br>Take the top spot in the ranking</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <footer class="footer">
+        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

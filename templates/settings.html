@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Settings</title>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="{{ url_for('index') }}" class="nav-link">Back to Timer</a>
+        <div class="logout-section">
+            <a href="{{ url_for('profile') }}">
+                <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+                    alt="Profile Picture" class="profile-icon">
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">
+                <i class="fas fa-door-open"></i> Log out
+            </a>
+        </div>
+    </header>
+    <form method="POST" class="settings_form">
+        <h2>Settings</h2>
+        <label for="work_time">Work Time (minutes):</label>
+        <input type="number" name="work_time" value="{{ work_time }}" min="1">
+        <label for="break_time">Break Time (minutes):</label>
+        <input type="number" name="break_time" value="{{ break_time }}" min="1">
+        <button type="submit">Save</button>
+    </form>
+    <footer class="footer">
+        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

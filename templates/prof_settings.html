@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+    <title>Register</title>
+</head>
+
+<body>
+    <header class="navbar">
+        <a href="{{ url_for('index') }}" class="nav-link">Back to Timer</a>
+        <div class="logout-section">
+            <a href="{{ url_for('profile') }}">
+                <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+                    alt="Profile Picture" class="profile-icon">
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">
+                <i class="fas fa-door-open"></i> Log out
+            </a>
+        </div>
+    </header>
+    <form method="POST" enctype="multipart/form-data" class="profile_form">
+        <h2>Edit your profile</h2>
+        <div class="avatar-upload">
+            <img id="avatar" src="static/profilePictures/{{ session.get('profile_pic') }}" alt="ProfPic">
+            <input type="file" id="file" name="profile_pic" accept=".png, .jpg">
+            <label for="file">Update profile picture</label>
+        </div><br>
+
+        <label for="about_me">About Me:</label>
+        <textarea name="about_me" id="about_me" placeholder="{{ session.get('about_me')}}"></textarea><br>
+
+        <hr>
+
+        <label for="new_password">New Password:</label>
+        <input type="password" name="password" placeholder="Password">
+        <label for="confirm_password">Confirm New Password:</label>
+        <input type="password" name="confirm_password" placeholder="Confirm Password">
+
+        <button type="submit">Confirm changes</button>
+        {% if error %}
+        <p style="color: red">{{ error }}</p>
+        {% endif %}
+    </form>
+    <footer class="footer">
+        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+    </footer>
+</body>
+
+</html>

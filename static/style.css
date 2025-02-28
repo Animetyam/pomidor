@@ -1,0 +1,446 @@
+/* Основные стили для минималистичного дизайна */
+:root {
+    --primary-color: #35554c;
+    --secondary-color: #c9decf;
+    --accent-color: #ffbe76;
+    --text-color: #333;
+    --border-radius: 8px;
+    --transition-speed: 0.3s;
+}
+
+body {
+    font-family: 'Inter', sans-serif;
+    background-color: var(--secondary-color);
+    color: var(--text-color);
+    margin: 0;
+    padding-bottom: 60px;
+}
+
+/* Навигация */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 25px;
+    padding-right: 20px;
+    background: var(--primary-color);
+    color: white;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.navbar-timer {
+    position: fixed;
+    display: flex;
+    justify-content: flex-end;
+    align-items: center;
+    padding: 15px 20px;
+    background: var(--primary-color);
+    color: white;
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    z-index: 1000;
+}
+
+.nav-link {
+    color: white;
+    text-decoration: none;
+    padding: 10px 15px;
+    transition: color var(--transition-speed);
+    font-weight: bold;
+}
+
+.nav-link:hover {
+    color: var(--accent-color);
+}
+
+.logout-section {
+    display: flex;
+    align-items: center;
+}
+
+.profile-icon {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    margin-right: 10px;
+}
+
+.logout-button,
+button {
+    background: var(--accent-color);
+    /* Оранжевый */
+    color: #7f542f;
+    /* Теплый коричнево-оранжевый для текста */
+    padding: 8px 12px;
+    border-radius: var(--border-radius);
+    text-decoration: none;
+    cursor: pointer;
+}
+
+.logout-button:hover,
+button:hover {
+    background: #7f542f;
+    color: white;
+}
+
+
+/* Основной контейнер */
+.container {
+    width: 90%;
+    max-width: 800px;
+    background: white;
+    padding: 20px;
+    border-radius: var(--border-radius);
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    margin: 80px auto 20px;
+}
+
+
+/* Футер */
+.footer {
+    width: 100%;
+    background: var(--primary-color);
+    color: white;
+    text-align: center;
+    padding: 15px 0;
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+}
+
+.footer_text {
+    margin: 0;
+}
+
+.profPic {
+    width: 150px;
+    height: 150px;
+    border-radius: 50%;
+    /* Округлая форма */
+    object-fit: cover;
+    /* Обрезка изображения */
+}
+
+.achivka {
+    width: 80px;
+    /* Размер картинки */
+    height: 80px;
+    /* Размер картинки */
+    margin: 10px;
+    object-fit: cover;
+}
+
+
+.settings_form,
+.profile_form {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 20px auto;
+}
+
+.role_form {
+    margin-top: 20px;
+}
+
+input[type="password"],
+input[type="text"],
+input[type="number"],
+select {
+    width: 100%;
+    max-width: 570px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    margin-top: 10px;
+    margin-bottom: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    display: block;
+    cursor: pointer;
+}
+
+input[type="password"],
+input[type="text"],
+input[type="number"] {
+    max-width: 570px;
+}
+
+select {
+    max-width: 596px;
+}
+
+input[type="password"]:focus,
+input[type="text"]:focus,
+input[type="number"]:focus,
+select:focus {
+    border-color: var(--accent-color);
+    cursor: pointer;
+}
+
+hr {
+    border: 1px solid #eee;
+    margin: 20px 0;
+}
+
+.timer-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    min-height: 50vh;
+    font-family: 'Inter', sans-serif;
+}
+
+.timer {
+    font-size: 5em;
+    color: #2c3e50;
+    /* Темно-синий цвет текста */
+    margin-bottom: 20px;
+    font-weight: bold;
+    letter-spacing: 2px;
+}
+
+.timer-button-container {
+    display: flex;
+    justify-content: space-between;
+    gap: 20px;
+}
+
+/* Кнопки на странице с таймером */
+.timer-button {
+    background: var(--accent-color);
+    /* Оранжевый */
+    color: #7f542f;
+    padding: 15px 30px;
+    border: none;
+    border-radius: 30px;
+    font-size: 18px;
+    cursor: pointer;
+    transition: transform 0.3s ease, background-color 0.3s ease;
+    width: 200px;
+}
+
+.timer-button:hover {
+    background: #7f542f;
+    color: white;
+}
+
+.timer-button:active {
+    transform: scale(0.98);
+}
+
+.timer-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+/* Стили для описания таймера */
+.timer-description {
+    font-size: 1.2em;
+    color: #333;
+    margin-top: 10px;
+    text-align: center;
+}
+
+
+.avatar-upload {
+    position: relative;
+}
+
+#avatar {
+    width: 150px;
+    height: 150px;
+    object-fit: cover;
+}
+
+#file {
+    display: none;
+    /* Скрыть стандартную кнопку */
+}
+
+label[for="file"] {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 150px;
+    height: 90px;
+    background-color: rgba(0, 0, 0, 0.5);
+    /* Полупрозрачный фон */
+    color: white;
+    font-size: 16px;
+    text-align: center;
+    padding-top: 60px;
+    cursor: pointer;
+}
+
+label[for="file"]:hover {
+    background-color: rgba(0, 0, 0, 0.8);
+}
+
+.achivka {
+    width: 100px;
+    opacity: 0.5;
+    margin: 10px;
+    border: 5px solid transparent;
+    border-radius: 10px;
+}
+
+.achivments {
+    display: flex;
+    align-items: center;
+    margin: 50px;
+}
+
+.opisanie_achivki {
+    width: 175px;
+}
+
+.mode {
+    width: 250px;
+    border: 5px solid black;
+    border-radius: 10px;
+    height: 150px;
+    margin: 50px;
+    text-align: center;
+}
+
+textarea {
+    width: 100%;
+    max-width: 570px;
+    height: 150px;
+    padding: 12px;
+    border-radius: 10px;
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    font-size: 14px;
+    resize: vertical;
+    margin-top: 10px;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+textarea:focus {
+    border-color: var(--accent-color);
+}
+
+.form_login,
+.form_registry {
+    background: #fff;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    max-width: 600px;
+    margin: 60px auto;
+}
+
+.link_registry,
+.link_login {
+    font-size: 14px;
+    margin-top: 10px;
+    display: block;
+}
+
+#container {
+    padding-left: 40px;
+}
+
+.mode-selection-container {
+    text-align: center;
+    padding: 40px;
+    margin-top: 50px;
+}
+
+.mode-cards {
+    display: flex;
+    justify-content: space-between;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+.mode-card {
+    background: var(--accent-color);
+    /* Оранжевый градиент */
+    color: white;
+    width: 250px;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    cursor: pointer;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    flex: 1 1 250px;
+    /* Обеспечивает гибкость карточек */
+}
+
+.mode-card h3 {
+    font-size: 1.5em;
+    margin: 15px 0;
+}
+
+.mode-card p {
+    font-size: 1.1em;
+    margin-bottom: 20px;
+}
+
+.mode-card:hover {
+    transform: scale(1.05);
+    /* Увеличение карточки при наведении */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    /* Увеличенная тень */
+}
+
+.mode-card:active {
+    transform: scale(0.98);
+    /* Сжатие карточки при клике */
+}
+
+.achievements-section {
+    margin-top: 40px;
+}
+
+.achievements-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(250px, 1fr));
+    /* Гибкая сетка */
+    gap: 30px;
+    margin-top: 20px;
+}
+
+.achievement-card {
+    background: #fff;
+    padding: 20px;
+    border-radius: 15px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.achievement-card:hover {
+    box-shadow: 0 8px 15px rgba(0, 0, 0, 0.2);
+}
+
+.achievement-icon {
+    width: 80px;
+    height: 80px;
+    margin-bottom: 10px;
+    object-fit: contain;
+}
+
+.achievement-card p {
+    font-size: 1em;
+    color: #333;
+}
