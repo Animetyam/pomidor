@@ -203,15 +203,25 @@ hr {
     align-items: center;
     min-height: 50vh;
     font-family: 'Inter', sans-serif;
+    width: 75%; /* Установите ширину */
+    margin-top: 10%;
+    margin-left: 12.5%;
 }
 
 .timer {
     font-size: 5em;
-    color: #2c3e50;
-    /* Темно-синий цвет текста */
-    margin-bottom: 20px;
+    color: #2c3e50; /* Темно-синий цвет текста */
+    margin-bottom: 10px;
     font-weight: bold;
     letter-spacing: 2px;
+    background-image: url('snake2.gif');
+    background-repeat: no-repeat;
+    background-position: center; /* Фон будет центрирован */
+    width: 100%; /* Ширина элемента */
+    height: 200px; /* Высота элемента */
+    display: flex; /* Чтобы текст был центрирован */
+    padding-top: 25px;
+    justify-content: center; /* Горизонтальное центрирование текста */
 }
 
 .timer-button-container {
@@ -444,3 +454,4 @@ textarea:focus {
     font-size: 1em;
     color: #333;
 }
+

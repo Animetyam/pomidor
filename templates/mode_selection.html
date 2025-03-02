@@ -8,15 +8,16 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Pomodoro</title>
     <script>
-        function redirectSettings() {
-            window.location.href = "{{ url_for('settings') }}";
+        function redirectIndex(mode) {
+            console.log('Функция вызвана с mode:', mode);
+            const baseUrl = window.location.origin + "{{ url_for('index') }}"; // Абсолютный путь
+            const url = new URL(baseUrl); // Создаем объект URL
+            url.searchParams.set('mode', mode); // Добавляем параметр mode
+            console.log('Новый URL:', url.href);
+            window.location.href = url.href; // Перенаправляем пользователя
         }
     </script>
-    <script>
-        function redirectIndex() {
-            window.location.href = "{{ url_for('index') }}";
-        }
-    </script>
+    <script> function redirectSettings() { window.location.href = "{{ url_for('settings') }}"; } </script>
 </head>
 
 <body>
@@ -36,11 +37,11 @@
     <div class="mode-selection-container">
         <h2>Select Timer Mode</h2>
         <div class="mode-cards">
-            <div class="mode-card" onclick="redirectIndex()">
+            <div class="mode-card" onclick="redirectIndex('low')">
                 <h3>Low Energy</h3>
                 <p>For a relaxed, calm session.</p>
             </div>
-            <div class="mode-card" onclick="redirectIndex()">
+            <div class="mode-card" onclick="redirectIndex('full')">
                 <h3>Full Energy</h3>
                 <p>For a focused, high-energy session.</p>
             </div>
@@ -54,3 +55,5 @@
         <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
     </footer>
 </body>
+
+</html>
