@@ -23,14 +23,14 @@ def index():
     mode = request.args.get('mode')
     work_time = session['custom_timer']['work_time']
     break_time = session['custom_timer']['break_time']
-    if mode == 'low':
-        timer = mongo.db.modes.find_one({'role': session['role']})
-        work_time = timer['low_work_time']
-        break_time = timer['low_break_time']
-    if mode == 'full':
-        timer = mongo.db.modes.find_one({'role': session['role']})
-        work_time = timer['work_time']
-        break_time = timer['break_time']
+    timer = mongo.db.modes.find_one({'role': session['role']})
+    if timer:
+        if mode == 'low':
+            work_time = timer['low_work_time']
+            break_time = timer['low_break_time']
+        if mode == 'full':
+            work_time = timer['work_time']
+            break_time = timer['break_time']
     return render_template('index.html', work_time=work_time, break_time=break_time)
 
 @app.route('/register', methods=['GET', 'POST'])
@@ -180,6 +180,7 @@ def reset_streak():
         mongo.db.users.update_one({'username': session['user']}, {'$set': {'profile_xp': session['profile_xp'], 'profile_stats': {'max_streak': user['profile_stats']['max_streak']}}})
         session.pop('current_streak')
     return 'Streak reset'
+
 
 if __name__ == '__main__':
     app.run(debug=True)

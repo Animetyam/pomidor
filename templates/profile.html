@@ -49,13 +49,13 @@
             <div class="achievements-grid">
                 <div class="achievement-card">
                     <img src="https://img.icons8.com/ios/452/star.png" alt="achivka" class="achievement-icon" {% if
-                        session.get('profile_xp', 0)>= 1 %}style="opacity: 1; border: 5px
+                        session.get('profile_xp', 0)>= 100 %}style="opacity: 1; border: 5px
                     solid #ffd700;"{% endif %}>
                     <p>Good Start<br>Reach level 1</p>
                 </div>
                 <div class="achievement-card">
                     <img src="https://img.icons8.com/ios/452/5-stars.png" alt="achivka" class="achievement-icon" {% if
-                        session.get('profile_xp', 0)>= 5 %}style="opacity: 1; border: 5px
+                        session.get('profile_xp', 0)>= 500 %}style="opacity: 1; border: 5px
                     solid #ffd700;"{% endif %}>
                     <p>Peak Performance<br>Achieve a streak of 10 work sessions in a row</p>
                 </div>
