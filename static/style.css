@@ -455,3 +455,8 @@ textarea:focus {
     color: #333;
 }
 
+.table{
+    text-align: center;
+    padding-top: 50px;
+}
+

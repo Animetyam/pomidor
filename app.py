@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from flask_session import Session
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 from datetime import timedelta
 
@@ -49,11 +50,11 @@ def register():
             error = "Passwords do not match."
             return render_template('register.html', error=error)
         mongo.db.users.insert_one({'username': username, 
-                                   'password': password, 
+                                   'password': generate_password_hash(password, method='pbkdf2:sha256'), 
                                    'role': role,
                                    'about_me': 'Here you can add some information about you',
-                                   'profile_stats': {'max_streak': 0},
-                                   'profile_xp': 100,
+                                   'profile_stats': {'max_streak': 0, 'champion': False},
+                                   'profile_xp': 0,
                                    'custom_timer': {'work_time': 30, 'break_time': 5},
                                    'profile_pic': 'defaultProfPic.png'})
         flash('Successfully Registered! Please log in.', 'success')
@@ -67,12 +68,10 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = mongo.db.users.find_one({'username': username, 'password': password})
-        
-        if user:
+        user = mongo.db.users.find_one({'username': username})
+        if user and check_password_hash(user['password'], password):
             session['user'] = username
             session['role'] = user['role']
-            session['password'] = user['password']
             session['profile_pic'] = user['profile_pic']
             session['about_me'] = user['about_me']
             session['profile_xp'] = user['profile_xp']
@@ -94,9 +93,7 @@ def prof_settings():
             error = "Passwords do not match."
             return render_template('prof_settings.html', error=error)
         if not password:
-            password = session['password']
-        else:
-            session['password'] = password
+            password = mongo.db.users.find_one({'username': session['user']})['password']
         if not about_me:
             about_me = session['about_me']
         else:
@@ -137,11 +134,21 @@ def settings():
 def profile():
     if not session.get('user'):
         return redirect(url_for('login'))
-
+    
+    user = mongo.db.users.find_one({'username': session['user']})
+    if user:
+        session['user'] = user['user']
+        session['role'] = user['role']
+        session['profile_pic'] = user['profile_pic']
+        session['about_me'] = user['about_me']
+        session['profile_xp'] = user['profile_xp']
+        session['custom_timer'] = user['custom_timer']
+        session['profile_stats'] = user['profile_stats']
+        return redirect(url_for('mode_selection'))
+    
     if request.method == 'POST':
         new_role = request.form.get('role')
         mongo.db.users.update_one({'username': session['user']}, {'$set': {'role': new_role}})
-        session['role'] = new_role  # update the role in the session
         flash('Role updated successfully!', 'success')
         return redirect(url_for('index'))
 
@@ -181,6 +188,10 @@ def reset_streak():
         session.pop('current_streak')
     return 'Streak reset'
 
+@app.route('/leaderboard')
+def leaderboard():
+    users = mongo.db.users.find().sort('profile_xp')
+    return render_template('leaderboard.html', users=users)
 
 if __name__ == '__main__':
     app.run(debug=True)
