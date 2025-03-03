@@ -2,6 +2,7 @@
 <html lang="en">
 
 <head>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
@@ -9,26 +10,44 @@
 </head>
 
 <body>
-    <div class="form_registry">
-        <form method="POST">
-            <h2>Register</h2>
-            <input type="text" name="username" placeholder="Username" required>
-            <input type="password" name="password" placeholder="Password" required>
-            <input type="password" name="confirm_password" placeholder="Confirm Password" required>
-            <select name="role" required>
-                <option value="student">Student</option>
-                <option value="employee">Employee</option>
-            </select>
-            <button type="submit">Register</button>
-            {% if error %}
-            <p style="color: red">{{ error }}</p>
-            {% endif %}
-        </form>
-        <a href="{{ url_for('login') }}" class="link_login">If you already have an account, you can login</a>
-    </div>
-    <footer class="footer">
-        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
-    </footer>
+    <header class="navbar-timer">
+        <div class="logout-section">
+            <a href="{{ url_for('login') }}" class="logout-button">
+                <i class="fas fa-door-closed"></i> Log in
+            </a>
+        </div>
+    </header>
+    <main>
+        <div class="form_registry">
+            <form method="POST">
+                <h2>Register</h2>
+                <input type="text" name="username" placeholder="Username" required>
+                <input type="password" name="password" placeholder="Password" required>
+                <input type="password" name="confirm_password" placeholder="Confirm Password" required>
+                <select name="role" required>
+                    <option value="student">Student</option>
+                    <option value="employee">Employee</option>
+                </select>
+                <button type="submit">Register</button>
+                {% if error %}
+                <p style="color: red">{{ error }}</p>
+                {% endif %}
+            </form>
+            <a href="{{ url_for('login') }}" class="link_login">If you already have an account, you can login</a>
+        </div>
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-nav">
+                    <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+                    <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+                    <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+                    <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+                    <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+                </div>
+                <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
 </body>
 
 </html>

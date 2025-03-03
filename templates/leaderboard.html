@@ -6,13 +6,36 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>About us</title>
+    <title>Leaderboard</title>
 </head>
 
 <body>
     <header class="navbar-timer">
     </header>
-    <p>Ny tyt nado napisat chto eto mb fynkzii</p>
+    <div class="leaderboard">
+        <h2>🏆 Leaderboard</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>🏅 Rank</th>
+                    <th>👤 Player</th>
+                    <th>⏳ XP</th>
+                </tr>
+            </thead>
+            <tbody id="leaderboard-body">
+                {% for item in users %}
+                <tr>
+                    <td>{{ loop.index }}</td>
+                    <td class="td_username"><img
+                            src="{{ url_for('static', filename='profilePictures/' + item['profile_pic']) }}"
+                            class="avatar"> {{ item['username'] }}</td>
+                    <td>{{item['profile_xp']}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    </div>
+
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-nav">

@@ -8,48 +8,116 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Pomodoro Timer</title>
     <script>
-        let workTime = {{ session.get('work_time', 25) }};
-        let breakTime = {{ session.get('break_time', 5) }};
+        let workTime = {{ work_time | int }};
+        let breakTime = {{ break_time | int }};
         let timer;
         let isWorkSession = true;
+        let timeLeft;
+        let totalTime = workTime * 60;
+        let progressCircle;
+        let circumference;
+
+
+        function updateProgress() {
+            if (!progressCircle) return;
+            const progress = timeLeft / totalTime;
+            progressCircle.style.strokeDashoffset = circumference * (1 - progress);
+
+            if (isWorkSession) {
+                progressCircle.style.stroke = "#FF5733";  // Например, красный для работы
+            } else {
+                progressCircle.style.stroke = "#4CAF50";  // Зеленый для перерыва
+            }
+        }
+
+        function updateDisplay() {
+            let minutes = Math.floor(timeLeft / 60);
+            let seconds = timeLeft % 60;
+            document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            updateProgress();
+        }
 
         function startTimer() {
-            let timeLeft = isWorkSession ? workTime * 60 : breakTime * 60;
-            timer = setInterval(function () {
-                const minutes = Math.floor(timeLeft / 60);
-                const seconds = timeLeft % 60;
-                document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-                timeLeft--;
+            // Проверяем, запущен ли уже таймер
+            if (timer) {
+                return;
+            }
 
-                if (timeLeft < 0) {
+            // Если timeLeft не инициализировано (первый запуск) или истекло, устанавливаем начальное значение
+            if (typeof timeLeft === 'undefined' || timeLeft <= 0) {
+                timeLeft = isWorkSession ? workTime * 60 : breakTime * 60;
+                totalTime = timeLeft;
+            }
+
+            function updateTimer() {
+                let minutes = Math.floor(timeLeft / 60);
+                let seconds = timeLeft % 60;
+                document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+
+                if (timeLeft <= 0) {
                     clearInterval(timer);
+                    timer = null;
+
                     playSound();
+
+                    if (isWorkSession) {
+                        fetch('/update_streak', { method: 'POST' })
+                            .then(response => response.text())
+                            .then(data => console.log(data));
+                    }
+
                     isWorkSession = !isWorkSession;
+                    timeLeft = isWorkSession ? workTime * 60 : breakTime * 60; // Сбрасываем timeLeft при переключении сессии
+                    totalTime = timeLeft;
                     startTimer();
+                    return; // Важно выйти из функции, чтобы избежать двойного запуска
                 }
-            }, 1000);
+
+                timeLeft--;
+                updateDisplay();
+            }
+
+            updateTimer();
+            timer = setInterval(updateTimer, 1000);
+
             document.getElementById('startBtn').disabled = true;
-            document.getElementById('pauseBtn').disabled = false; // Активируем кнопку паузы
+            document.getElementById('pauseBtn').disabled = false;
             document.getElementById('resetBtn').disabled = false;
         }
 
         function pauseTimer() {
             clearInterval(timer);
-            isTimerRunning = false; // останавливаем таймер
-            document.getElementById('pauseBtn').textContent = 'Resume Timer'; // Меняем текст на "Resume"
-            document.getElementById('pauseBtn').disabled = false; // Блокируем кнопку паузы
-            document.getElementById('startBtn').disabled = true;
+            timer = null;
+            document.getElementById('pauseBtn').textContent = '▶ Resume Timer';
+            document.getElementById('pauseBtn').onclick = resumeTimer;
+        }
+
+        function resumeTimer() {
+            document.getElementById('pauseBtn').textContent = '⏸ Pause Timer';
+            document.getElementById('pauseBtn').onclick = pauseTimer;
+            startTimer();
         }
 
         function resetTimer() {
             clearInterval(timer);
-            timeLeft = workTime * 60;
-            document.getElementById('time').textContent = `${workTime}:00`;
-            isTimerRunning = false; // останавливаем таймер
-            document.getElementById('startBtn').textContent = 'Start Timer'; // Восстанавливаем начальный текст
-            document.getElementById('resetBtn').disabled = true; // Блокируем кнопку сброса
-            document.getElementById('pauseBtn').disabled = true; // Блокируем кнопку паузы
+            timer = null;
+            isWorkSession = true;
+            timeLeft = workTime * 60; // Сбрасываем timeLeft при сбросе таймера
+            totalTime = timeLeft;
+
+            updateDisplay(); // Обновляем отображение времени
+
+            document.getElementById('startBtn').disabled = false;
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
+            document.getElementById('pauseBtn').textContent = '⏸ Pause Timer';
+            document.getElementById('pauseBtn').onclick = pauseTimer;
+
+            fetch('/reset_streak', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => console.log(data));
         }
+
 
         function playSound() {
             const audio = new Audio('{{ url_for("static", filename="notification_sound.mp3") }}');
@@ -65,8 +133,32 @@
             if (Notification.permission !== "granted") {
                 Notification.requestPermission();
             }
+
+            progressCircle = document.querySelector(".progress-ring__progress");
+
+            if (!progressCircle) {
+                console.error("Ошибка: не найден progressCircle!");
+                return;
+            }
+
+            const radius = progressCircle.r.baseVal.value;
+            circumference = 2 * Math.PI * radius; // Длина окружности круга (r = 60)
+            progressCircle.style.strokeDasharray = circumference;
+            progressCircle.style.strokeDashoffset = circumference;
+
+            timeLeft = workTime * 60; // Инициализируем timeLeft при загрузке страницы
+            totalTime = timeLeft;
+            updateDisplay(); // Обновляем отображение времени при загрузке страницы
+
+            document.getElementById('pauseBtn').disabled = true;
+            document.getElementById('resetBtn').disabled = true;
+
+
         });
 
+        window.addEventListener("unload", function () {
+            navigator.sendBeacon('/reset_streak', JSON.stringify({}));
+        });
     </script>
 </head>
 
@@ -83,25 +175,40 @@
             </a>
         </div>
     </header>
-    <div class="timer-container">
-        <h2>Timer</h2>
-        <div class="timer">
-            <span id="time">25:00</span> <!-- Таймер будет отображаться здесь -->
-        </div>
+    <main>
+        <div class="timer-container">
+            <h2 class="timer_h2">Timer</h2>
+            <div class="progress-ring">
+                <svg width="300" height="300">
+                    <circle class="progress-ring__background" cx="150" cy="150" r="120"></circle>
+                    <circle class="progress-ring__progress" cx="150" cy="150" r="120"></circle>
+                </svg>
+                <span id="timer">25:00</span>
+            </div>
 
-        <div class="timer-button-container">
-            <button id="startBtn" class="timer-button" onclick="startTimer()">Start Timer</button>
-            <button id="pauseBtn" class="timer-button" onclick="pauseTimer()" disabled>Pause</button>
-            <button id="resetBtn" class="timer-button" onclick="resetTimer()" disabled>Reset Timer</button>
-        </div>
+            <div class="timer-button-container">
+                <button id="startBtn" class="timer-button" onclick="startTimer()">▶ Start Timer</button>
+                <button id="pauseBtn" class="timer-button" onclick="pauseTimer()" disabled>⏸ Pause</button>
+                <button id="resetBtn" class="timer-button" onclick="resetTimer()" disabled>⏹ Reset Timer</button>
+            </div>
 
-        <div class="timer-description">
-            <p>Focus on your task. Take a break once the timer runs out!</p>
+            <div class="timer-description">
+                <p>Focus on your task. Take a break once the timer runs out!</p>
+            </div>
         </div>
-    </div>
-    <footer class="footer">
-        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
-    </footer>
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-nav">
+                    <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+                    <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+                    <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+                    <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+                    <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+                </div>
+                <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
 </body>
 
 </html>

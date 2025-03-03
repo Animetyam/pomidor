@@ -24,17 +24,28 @@
             </a>
         </div>
     </header>
-    <form method="POST" class="settings_form">
-        <h2>Settings</h2>
-        <label for="work_time">Work Time (minutes):</label>
-        <input type="number" name="work_time" value="{{ work_time }}" min="1">
-        <label for="break_time">Break Time (minutes):</label>
-        <input type="number" name="break_time" value="{{ break_time }}" min="1">
-        <button type="submit">Save</button>
-    </form>
-    <footer class="footer">
-        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
-    </footer>
+    <main>
+        <form method="POST" class="settings_form">
+            <h2>Settings</h2>
+            <label for="work_time">Work Time (minutes):</label>
+            <input type="number" name="work_time" value="{{ work_time }}" min="1">
+            <label for="break_time">Break Time (minutes):</label>
+            <input type="number" name="break_time" value="{{ break_time }}" min="1">
+            <button type="submit">Save</button>
+        </form>
+        <footer class="footer">
+            <div class="footer-container">
+                <div class="footer-nav">
+                    <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+                    <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+                    <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+                    <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+                    <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+                </div>
+                <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+            </div>
+        </footer>
+    </main>
 </body>
 
 </html>

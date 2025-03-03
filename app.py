@@ -3,6 +3,7 @@ from flask import Flask, render_template, redirect, url_for, request, session, f
 from flask_pymongo import PyMongo
 from bson.objectid import ObjectId
 from flask_session import Session
+from werkzeug.security import generate_password_hash, check_password_hash
 import json
 from datetime import timedelta
 
@@ -20,10 +21,23 @@ Session(app)
 def index():
     if not session.get('user'):
         return redirect(url_for('login'))
-    return render_template('index.html', role=session['role'])
+    mode = request.args.get('mode')
+    work_time = session['custom_timer']['work_time']
+    break_time = session['custom_timer']['break_time']
+    timer = mongo.db.modes.find_one({'role': session['role']})
+    if timer:
+        if mode == 'low':
+            work_time = timer['low_work_time']
+            break_time = timer['low_break_time']
+        if mode == 'full':
+            work_time = timer['work_time']
+            break_time = timer['break_time']
+    return render_template('index.html', work_time=work_time, break_time=break_time)
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
+    if session.get('user'):
+        return redirect(url_for('mode_selection'))
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
@@ -36,11 +50,11 @@ def register():
             error = "Passwords do not match."
             return render_template('register.html', error=error)
         mongo.db.users.insert_one({'username': username, 
-                                   'password': password, 
+                                   'password': generate_password_hash(password, method='pbkdf2:sha256'), 
                                    'role': role,
                                    'about_me': 'Here you can add some information about you',
-                                   'profile_stats': {'max_streak': 0},
-                                   'profile_xp': 100,
+                                   'profile_stats': {'max_streak': 0, 'champion': False},
+                                   'profile_xp': 0,
                                    'custom_timer': {'work_time': 30, 'break_time': 5},
                                    'profile_pic': 'defaultProfPic.png'})
         flash('Successfully Registered! Please log in.', 'success')
@@ -54,16 +68,14 @@ def login():
     if request.method == 'POST':
         username = request.form['username']
         password = request.form['password']
-        user = mongo.db.users.find_one({'username': username, 'password': password})
-        
-        if user:
+        user = mongo.db.users.find_one({'username': username})
+        if user and check_password_hash(user['password'], password):
             session['user'] = username
             session['role'] = user['role']
-            session['password'] = user['password']
             session['profile_pic'] = user['profile_pic']
             session['about_me'] = user['about_me']
-            session['profile_stats'] = user['profile_stats']
             session['profile_xp'] = user['profile_xp']
+            session['custom_timer'] = user['custom_timer']
             return redirect(url_for('mode_selection'))
         else:
             error = "Invalid username or password!"
@@ -81,9 +93,7 @@ def prof_settings():
             error = "Passwords do not match."
             return render_template('prof_settings.html', error=error)
         if not password:
-            password = session['password']
-        else:
-            session['password'] = password
+            password = mongo.db.users.find_one({'username': session['user']})['password']
         if not about_me:
             about_me = session['about_me']
         else:
@@ -107,44 +117,38 @@ def prof_settings():
 def settings():
     if not session.get('user'):
         return redirect(url_for('login'))
-    
     if request.method == 'POST':
-        work_time = request.form.get('work_time', 25)
-        break_time = request.form.get('break_time', 5)
-        session['work_time'] = work_time
-        session['break_time'] = break_time
+        if request.form['work_time']:
+            session['custom_timer']['work_time'] = request.form['work_time']
+        if request.form['break_time']:
+            session['custom_timer']['break_time'] = request.form['break_time']
+        mongo.db.users.update_one({'username': session['user']}, {'$set': {'custom_timer': {'work_time': session['custom_timer']['work_time'], 'break_time': session['custom_timer']['break_time']}}})
+        flash('Timer updated successfully!')
         return redirect(url_for('index'))
     
-    if session['role'] == 'student':
-        work_time = 30
-        break_time = 5
-    else:  # employee
-        work_time = 60
-        break_time = 15
-
-    session['work_time'] = work_time
-    session['break_time'] = break_time
+    work_time = session['custom_timer']['work_time']
+    break_time = session['custom_timer']['break_time']
     return render_template('settings.html', work_time=work_time, break_time=break_time)
 
 @app.route('/profile', methods=['GET', 'POST'])
 def profile():
     if not session.get('user'):
         return redirect(url_for('login'))
-
+    
+    user = mongo.db.users.find_one({'username': session['user']})
+    if user:
+        session['user'] = user['username']
+        session['role'] = user['role']
+        session['profile_pic'] = user['profile_pic']
+        session['about_me'] = user['about_me']
+        session['profile_xp'] = user['profile_xp']
+        session['custom_timer'] = user['custom_timer']
+        session['profile_stats'] = user['profile_stats']
+    
     if request.method == 'POST':
         new_role = request.form.get('role')
         mongo.db.users.update_one({'username': session['user']}, {'$set': {'role': new_role}})
-        session['role'] = new_role  # update the role in the session
         flash('Role updated successfully!', 'success')
-
-        # set timer values based on the new role
-        if new_role == 'student':
-            session['work_time'] = 30
-            session['break_time'] = 5
-        else:  # employee
-            session['work_time'] = 60
-            session['break_time'] = 15
-
         return redirect(url_for('index'))
 
     return render_template('profile.html', current_role=session['role'])
@@ -155,12 +159,38 @@ def about_us():
 
 @app.route('/mode_selection')
 def mode_selection():
+    if not session.get('user'):
+        return redirect(url_for('login'))
     return render_template('mode_selection.html')
 
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect(url_for('login'))
+
+@app.route('/update_streak', methods=['POST'])
+def update_streak():
+    if 'current_streak' in session:
+        session['current_streak'] += 1
+    else:
+        session['current_streak'] = 1
+    return 'Streak updated'
+
+@app.route('/reset_streak', methods=['POST'])
+def reset_streak():
+    if 'current_streak' in session:
+        session['profile_xp'] = session['profile_xp'] + session['current_streak']*100 + session['current_streak']**4
+        user = mongo.db.users.find_one({'username': session['user']})
+        if user['profile_stats']['max_streak']<session['current_streak']:
+            user['profile_stats']['max_streak'] = session['current_streak']
+        mongo.db.users.update_one({'username': session['user']}, {'$set': {'profile_xp': session['profile_xp'], 'profile_stats': {'max_streak': user['profile_stats']['max_streak']}}})
+        session.pop('current_streak')
+    return 'Streak reset'
+
+@app.route('/leaderboard')
+def leaderboard():
+    users = mongo.db.users.find().sort('profile_xp')
+    return render_template('leaderboard.html', users=users)
 
 if __name__ == '__main__':
     app.run(debug=True)

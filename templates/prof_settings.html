@@ -47,7 +47,16 @@
         {% endif %}
     </form>
     <footer class="footer">
-        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+        <div class="footer-container">
+            <div class="footer-nav">
+                <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+                <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+                <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+                <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+                <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+            </div>
+            <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+        </div>
     </footer>
 </body>
 

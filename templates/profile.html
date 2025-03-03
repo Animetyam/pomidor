@@ -48,21 +48,38 @@
             <h3>Achivments</h3>
             <div class="achievements-grid">
                 <div class="achievement-card">
-                    <img src="https://img.icons8.com/ios/452/star.png" alt="achivka" class="achievement-icon" {% if
-                        session.get('profile_xp', 0)>= 1 %}style="opacity: 1; border: 5px
-                    solid #ffd700;"{% endif %}>
+                    <img src="{{ url_for('static', filename='achivments/start.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 100 %}{% endif %}>
                     <p>Good Start<br>Reach level 1</p>
                 </div>
                 <div class="achievement-card">
-                    <img src="https://img.icons8.com/ios/452/5-stars.png" alt="achivka" class="achievement-icon" {% if
-                        session.get('profile_xp', 0)>= 5 %}style="opacity: 1; border: 5px
-                    solid #ffd700;"{% endif %}>
+                    <img src="{{ url_for('static', filename='achivments/lvl10.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 500 %}{% endif %}>
                     <p>Peak Performance<br>Achieve a streak of 10 work sessions in a row</p>
                 </div>
                 <div class="achievement-card">
+                    <img src="{{ url_for('static', filename='achivments/lvl5.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
+                    <p>Level 5 Mastery<br>Reach level 5</p>
+                </div>
+                <div class="achievement-card">
                     <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}style="opacity: 1; border: 5px
-                    solid #ffd700;"{% endif %}>
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
+                    <p>Champion<br>Take the top spot in the ranking</p>
+                </div>
+                <div class="achievement-card">
+                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
+                    <p>Champion<br>Take the top spot in the ranking</p>
+                </div>
+                <div class="achievement-card">
+                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
+                    <p>Champion<br>Take the top spot in the ranking</p>
+                </div>
+                <div class="achievement-card">
+                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
+                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
                     <p>Champion<br>Take the top spot in the ranking</p>
                 </div>
             </div>
@@ -70,7 +87,16 @@
     </div>
 
     <footer class="footer">
-        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+        <div class="footer-container">
+            <div class="footer-nav">
+                <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+                <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+                <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+                <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+                <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+            </div>
+            <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+        </div>
     </footer>
 </body>
 

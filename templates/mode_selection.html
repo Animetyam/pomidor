@@ -8,21 +8,21 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
     <title>Pomodoro</title>
     <script>
-        function redirectSettings() {
-            window.location.href = "{{ url_for('settings') }}";
+        function redirectIndex(mode) {
+            console.log('Функция вызвана с mode:', mode);
+            const baseUrl = window.location.origin + "{{ url_for('index') }}"; // Абсолютный путь
+            const url = new URL(baseUrl); // Создаем объект URL
+            url.searchParams.set('mode', mode); // Добавляем параметр mode
+            console.log('Новый URL:', url.href);
+            window.location.href = url.href; // Перенаправляем пользователя
         }
     </script>
-    <script>
-        function redirectIndex() {
-            window.location.href = "{{ url_for('index') }}";
-        }
-    </script>
+    <script> function redirectSettings() { window.location.href = "{{ url_for('settings') }}"; } </script>
 </head>
 
 <body>
     <header class="navbar-timer">
         <div class="logout-section">
-            <a href="{{ url_for('about_us') }}" class="nav-link" style="margin-right: 100px">About us</a>
             <a href="{{ url_for('profile') }}">
                 <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
                     alt="Profile Picture" class="profile-icon">
@@ -36,11 +36,11 @@
     <div class="mode-selection-container">
         <h2>Select Timer Mode</h2>
         <div class="mode-cards">
-            <div class="mode-card" onclick="redirectIndex()">
+            <div class="mode-card" onclick="redirectIndex('low')">
                 <h3>Low Energy</h3>
                 <p>For a relaxed, calm session.</p>
             </div>
-            <div class="mode-card" onclick="redirectIndex()">
+            <div class="mode-card" onclick="redirectIndex('full')">
                 <h3>Full Energy</h3>
                 <p>For a focused, high-energy session.</p>
             </div>
@@ -51,6 +51,17 @@
         </div>
     </div>
     <footer class="footer">
-        <p class="footer_text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+        <div class="footer-container">
+            <div class="footer-nav">
+                <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+                <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+                <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+                <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+                <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+            </div>
+            <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+        </div>
     </footer>
 </body>
+
+</html>

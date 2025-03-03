@@ -12,8 +12,21 @@ body {
     font-family: 'Inter', sans-serif;
     background-color: var(--secondary-color);
     color: var(--text-color);
+    display: flex;
+    flex-direction: column;
+}
+
+html,
+body {
+    height: 100%;
     margin: 0;
-    padding-bottom: 60px;
+}
+
+
+body>main {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
 }
 
 /* Навигация */
@@ -90,6 +103,7 @@ button {
 button:hover {
     background: #7f542f;
     color: white;
+    text-decoration: none;
 }
 
 
@@ -106,21 +120,52 @@ button:hover {
 
 
 /* Футер */
+
 .footer {
-    width: 100%;
-    background: var(--primary-color);
+    background-color: var(--primary-color);
+    /* Основной цвет сайта */
     color: white;
+    padding: 20px 0;
     text-align: center;
-    padding: 15px 0;
-    position: fixed;
-    bottom: 0;
-    left: 0;
-    right: 0;
+    width: 100%;
+    margin-top: auto;
 }
 
-.footer_text {
-    margin: 0;
+
+.footer-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    max-width: 1200px;
+    margin: 0 auto;
 }
+
+.footer-nav {
+    display: flex;
+    gap: 20px;
+    /* Расстояние между ссылками */
+    flex-wrap: wrap;
+    justify-content: center;
+    margin-bottom: 10px;
+}
+
+.footer-link {
+    color: white !important;
+    text-decoration: none !important;
+    font-size: 16px;
+    transition: opacity 0.3s ease-in-out;
+}
+
+.footer-link:hover {
+    opacity: 0.7;
+}
+
+.footer-text {
+    font-size: 14px;
+    margin-bottom: 0px;
+}
+
 
 .profPic {
     width: 150px;
@@ -141,15 +186,46 @@ button:hover {
 }
 
 
-.settings_form,
 .profile_form {
     background: #fff;
     padding: 20px;
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     max-width: 600px;
+    width: 100%;
     margin: 20px auto;
 }
+
+.settings_form {
+    background: white;
+    padding: 25px;
+    border-radius: 10px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    max-width: 500px;
+    margin: 40px auto;
+    text-align: center;
+    width: 100%;
+}
+
+.settings_form h2 {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+.settings_form input {
+    width: 100%;
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    transition: all 0.3s ease-in-out;
+}
+
+.settings_form input:focus {
+    border-color: var(--accent-color);
+    box-shadow: 0 0 8px rgba(255, 190, 118, 0.5);
+}
+
 
 .role_form {
     margin-top: 20px;
@@ -203,15 +279,71 @@ hr {
     align-items: center;
     min-height: 50vh;
     font-family: 'Inter', sans-serif;
+    width: 75%;
+    /* Установите ширину */
+    margin-top: 8%;
+    margin-left: 12.5%;
 }
 
 .timer {
     font-size: 5em;
     color: #2c3e50;
     /* Темно-синий цвет текста */
-    margin-bottom: 20px;
+    margin-bottom: 10px;
     font-weight: bold;
     letter-spacing: 2px;
+    /* Фон будет центрирован */
+    width: 100%;
+    /* Ширина элемента */
+    height: 200px;
+    /* Высота элемента */
+    display: flex;
+    /* Чтобы текст был центрирован */
+    padding-top: 25px;
+    justify-content: center;
+    /* Горизонтальное центрирование текста */
+}
+
+#timer {
+    font-size: 48px;
+    font-weight: bold;
+    position: absolute;
+    color: #333;
+}
+
+.timer_h2 {
+    margin: 0;
+}
+
+.progress-ring {
+    position: relative;
+    width: 300px;
+    height: 300px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.progress-ring svg {
+    transform: rotate(-90deg);
+    width: 100%;
+    height: 100%;
+}
+
+.progress-ring__background {
+    fill: none;
+    stroke: #D3D3D3;
+    stroke-width: 16;
+}
+
+.progress-ring__progress {
+    fill: none;
+    stroke: var(--accent-color);
+    stroke-width: 16;
+    stroke-linecap: round;
+    stroke-dasharray: 753.98;
+    stroke-dashoffset: 753.98;
+    transition: stroke-dashoffset 0.5s linear;
 }
 
 .timer-button-container {
@@ -343,7 +475,8 @@ textarea:focus {
     border-radius: 10px;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
     max-width: 600px;
-    margin: 60px auto;
+    margin: 90px auto;
+    width: 100%;
 }
 
 .link_registry,
@@ -354,7 +487,10 @@ textarea:focus {
 }
 
 #container {
-    padding-left: 40px;
+    width: 100%;
+    padding: 20px 10%;
+    box-sizing: border-box;
+    margin-bottom: 40px;
 }
 
 .mode-selection-container {
@@ -443,4 +579,64 @@ textarea:focus {
 .achievement-card p {
     font-size: 1em;
     color: #333;
+}
+
+.leaderboard {
+    max-width: 500px;
+    margin: 50px auto;
+    padding: 20px;
+    background: white;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 10px;
+    width: 100%;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+th {
+    background: #FF6F61;
+    color: white;
+    padding: 10px;
+    text-align: center;
+}
+
+/* Ячейки */
+td {
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    text-align: center;
+}
+
+
+/* Аватарка игрока */
+.avatar {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    margin-right: 8px;
+    vertical-align: middle;
+}
+
+tbody tr:nth-child(even) {
+    background: #f9f9f9;
+}
+
+/* Анимация появления */
+tr {
+    animation: fadeIn 0.5s ease-in-out;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
 }
