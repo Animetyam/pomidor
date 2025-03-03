@@ -10,8 +10,28 @@
 </head>
 
 <body>
+    {% if session.get('user')%} 
     <header class="navbar-timer">
+        <div class="logout-section">
+            <a href="{{ url_for('profile') }}">
+                <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+                    alt="Profile Picture" class="profile-icon">
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">
+                <i class="fas fa-door-open"></i> Log out
+            </a>
+        </div>
     </header>
+    {% else %}
+    <header class="navbar-timer">
+        <div class="logout-section">
+            <a href="{{ url_for('login') }}" class="logout-button">
+                <i class="fas fa-door-closed"></i> Log in
+            </a>
+        </div>
+    </header>
+    {% endif %}
     <div class="leaderboard">
         <h2>🏆 Leaderboard</h2>
         <table>

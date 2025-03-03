@@ -149,7 +149,7 @@ def profile():
         new_role = request.form.get('role')
         mongo.db.users.update_one({'username': session['user']}, {'$set': {'role': new_role}})
         flash('Role updated successfully!', 'success')
-        return redirect(url_for('index'))
+        return redirect(url_for('profile'))
 
     return render_template('profile.html', current_role=session['role'])
 
@@ -183,13 +183,17 @@ def reset_streak():
         user = mongo.db.users.find_one({'username': session['user']})
         if user['profile_stats']['max_streak']<session['current_streak']:
             user['profile_stats']['max_streak'] = session['current_streak']
-        mongo.db.users.update_one({'username': session['user']}, {'$set': {'profile_xp': session['profile_xp'], 'profile_stats': {'max_streak': user['profile_stats']['max_streak']}}})
+        mongo.db.users.update_one({'username': session['user']}, {'$set': {'profile_xp': session['profile_xp'], 'profile_stats': {'max_streak': user['profile_stats']['max_streak'], 'champion': user['profile_stats']['champion']}}})
+        users = mongo.db.users.find().sort('profile_xp', -1)
+        if users:
+            if users[0] and users[0]['profile_xp'] > 0 and users[0]['profile_stats']['champion'] == False:
+                mongo.db.users.update_one({'username': users[0]['username']}, {'$set': {'profile_stats': {'max_streak': users[0]['profile_stats']['max_streak'], 'champion': True}}})  
         session.pop('current_streak')
     return 'Streak reset'
 
 @app.route('/leaderboard')
 def leaderboard():
-    users = mongo.db.users.find().sort('profile_xp')
+    users = mongo.db.users.find().sort('profile_xp', -1)
     return render_template('leaderboard.html', users=users)
 
 if __name__ == '__main__':

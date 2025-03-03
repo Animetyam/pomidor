@@ -24,9 +24,9 @@
             progressCircle.style.strokeDashoffset = circumference * (1 - progress);
 
             if (isWorkSession) {
-                progressCircle.style.stroke = "#FF5733";  // Например, красный для работы
+                progressCircle.style.stroke = "#FF5733";  
             } else {
-                progressCircle.style.stroke = "#4CAF50";  // Зеленый для перерыва
+                progressCircle.style.stroke = "#4CAF50"; 
             }
         }
 
@@ -99,6 +99,10 @@
         }
 
         function resetTimer() {
+            fetch('/reset_streak', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => console.log(data));
+            
             clearInterval(timer);
             timer = null;
             isWorkSession = true;
@@ -113,9 +117,6 @@
             document.getElementById('pauseBtn').textContent = '⏸ Pause Timer';
             document.getElementById('pauseBtn').onclick = pauseTimer;
 
-            fetch('/reset_streak', { method: 'POST' })
-                .then(response => response.text())
-                .then(data => console.log(data));
         }
 
 
@@ -156,9 +157,14 @@
 
         });
 
-        window.addEventListener("unload", function () {
-            navigator.sendBeacon('/reset_streak', JSON.stringify({}));
+        window.addEventListener("beforeunload", function (event) {
+            fetch('/reset_streak', { method: 'POST' })
+                .then(response => response.text())
+                .then(data => console.log(data));
+            
+            resetTimer();
         });
+
     </script>
 </head>
 

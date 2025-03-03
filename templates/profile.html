@@ -16,7 +16,7 @@
 
 <body>
     <header class="navbar">
-        <a href="{{ url_for('index') }}" class="nav-link">Back to Timer</a>
+        <a href="{{ url_for('mode_selection') }}" class="nav-link">Back to Timer</a>
         <div class="logout-section">
             <a href="{{ url_for('profile') }}">
                 <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
@@ -47,40 +47,30 @@
         <div class="achievements-section">
             <h3>Achivments</h3>
             <div class="achievements-grid">
-                <div class="achievement-card">
+                <div class="achievement-card" {% if session.get('profile_xp', 0) < 100 %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
                     <img src="{{ url_for('static', filename='achivments/start.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 100 %}{% endif %}>
+                        class="achievement-icon" {% if session.get('profile_xp', 0) < 100 %}style="opacity: 0.5"{% endif %}>
                     <p>Good Start<br>Reach level 1</p>
                 </div>
-                <div class="achievement-card">
+                <div class="achievement-card" {% if session.get('profile_stats')['max_streak'] < 10 %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
                     <img src="{{ url_for('static', filename='achivments/lvl10.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 500 %}{% endif %}>
+                        class="achievement-icon" {% if session.get('profile_stats')['max_streak'] < 10 %}style="opacity: 0.5"{% endif %}>
                     <p>Peak Performance<br>Achieve a streak of 10 work sessions in a row</p>
                 </div>
-                <div class="achievement-card">
+                <div class="achievement-card" {% if session.get('profile_xp', 0) < 500 %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
                     <img src="{{ url_for('static', filename='achivments/lvl5.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
+                        class="achievement-icon" {% if session.get('profile_xp', 0) < 500 %}style="opacity: 0.5"{% endif %}>
                     <p>Level 5 Mastery<br>Reach level 5</p>
                 </div>
-                <div class="achievement-card">
+                <div class="achievement-card" {% if session.get('profile_stats')['champion'] == False %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
                     <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
+                        class="achievement-icon" {% if not session.get('profile_stats')['champion'] %}style="opacity: 0.5"{% endif %}>
                     <p>Champion<br>Take the top spot in the ranking</p>
                 </div>
-                <div class="achievement-card">
+                <div class="achievement-card" {% if session.get('profile_stats')['max_streak'] < 1000 %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
                     <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
-                    <p>Champion<br>Take the top spot in the ranking</p>
-                </div>
-                <div class="achievement-card">
-                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
-                    <p>Champion<br>Take the top spot in the ranking</p>
-                </div>
-                <div class="achievement-card">
-                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
-                        class="achievement-icon" {% if session.get('profile_xp', 0)>= 5 %}{% endif %}>
-                    <p>Champion<br>Take the top spot in the ranking</p>
+                        class="achievement-icon" {% if session.get('profile_xp', 0) < 5000 %}style="opacity: 0.5"{% endif %}>
+                    <p>Sssecret<br>Sssomething looks ssstrange in the story of the tomato</p>
                 </div>
             </div>
         </div>

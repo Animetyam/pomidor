@@ -10,9 +10,46 @@
 </head>
 
 <body>
+    {% if session.get('user')%} 
     <header class="navbar-timer">
+        <div class="logout-section">
+            <a href="{{ url_for('profile') }}">
+                <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+                    alt="Profile Picture" class="profile-icon">
+            </a>
+            <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
+            <a href="{{ url_for('logout') }}" class="logout-button">
+                <i class="fas fa-door-open"></i> Log out
+            </a>
+        </div>
     </header>
-    <p>Ny tyt nado napisat chto eto mb fynkzii</p>
+    {% else %}
+    <header class="navbar-timer">
+        <div class="logout-section">
+            <a href="{{ url_for('login') }}" class="logout-button">
+                <i class="fas fa-door-closed"></i> Log in
+            </a>
+        </div>
+    </header>
+    {% endif %}
+    <div class="about_us">
+        <h1>Pomodoro Technique</h1>
+        
+        <p>The Pomodoro Technique is a time management method developed by Francesco Cirillo in the late 1980s. The technique is named after a kitchen timer shaped like a tomato (Pomodoro in Italian) that Cirillo used as a university student to help him stay focused and on track.</p>
+        
+        <h2>Key Principles:</h2>
+        <ul>
+            <li><strong>Task Selection</strong>: Choose a task you want to work on.</li>
+            <li><strong>Set the Timer</strong>: Set a timer for 25 minutes (one "Pomodoro").</li>
+            <li><strong>Focus on Work</strong>: Work on the task without interruptions until the timer rings.</li>
+            <li><strong>Short Break</strong>: Take a 5-minute break after each Pomodoro.</li>
+            <li><strong>Long Break</strong>: After four Pomodoros, take a longer break of 15-30 minutes.</li>
+        </ul>
+        
+        <p>This technique helps increase productivity, reduce distractions, and improve work habits. You can use traditional kitchen timers or apps on your smartphone or computer to implement the Pomodoro Technique.</p>
+        
+        <p>Learn more about how to apply this technique in your daily routine and enhance your productivity by visiting <a href="https://en.wikipedia.org/wiki/Pomodoro_Technique">Wikipedia</a>.</p>
+    </div>
     <footer class="footer">
         <div class="footer-container">
             <div class="footer-nav">
