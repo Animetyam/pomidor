@@ -111,6 +111,7 @@ def prof_settings():
                 return render_template('prof_settings.html', error = error)      
         mongo.db.users.update_one({'username': session['user']}, {'$set': {'password': password, 'about_me': about_me, 'profile_pic': profile_pic}})
         flash('Profile updated successfully!')
+        return redirect(url_for('profile'))
     return render_template('prof_settings.html')
 
 @app.route('/settings', methods=['GET', 'POST'])

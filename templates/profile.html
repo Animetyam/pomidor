@@ -45,7 +45,7 @@
         </form>
 
         <div class="achievements-section">
-            <h3>Achivments</h3>
+            <h3>Achievements</h3>
             <div class="achievements-grid">
                 <div class="achievement-card" {% if session.get('profile_xp', 0) < 100 %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
                     <img src="{{ url_for('static', filename='achivments/start.png') }}" alt="achivka"
@@ -68,7 +68,7 @@
                     <p>Champion<br>Take the top spot in the ranking</p>
                 </div>
                 <div class="achievement-card" {% if session.get('profile_stats')['max_streak'] < 1000 %}style="opacity: 0.5;  border: 5px solid white;"{% endif %}>
-                    <img src="{{ url_for('static', filename='achivments/champion.png') }}" alt="achivka"
+                    <img src="{{ url_for('static', filename='achivments/secret.png') }}" alt="achivka"
                         class="achievement-icon" {% if session.get('profile_xp', 0) < 5000 %}style="opacity: 0.5"{% endif %}>
                     <p>Sssecret<br>Sssomething looks ssstrange in the story of the tomato</p>
                 </div>
