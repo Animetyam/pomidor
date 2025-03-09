@@ -13,148 +13,114 @@
         let timer;
         let isWorkSession = true;
         let timeLeft;
-        let totalTime = workTime * 60;
+        let totalTime;
         let progressCircle;
         let circumference;
+        let audio = new Audio('{{ url_for("static", filename="notification_sound.mp3") }}');
+        audio.preload = 'auto';
+        let lastTime = Date.now();
 
+        function initTimer() {
+            timeLeft = isWorkSession ? workTime * 60 : breakTime * 60;
+            totalTime = timeLeft;
+            updateDisplay();
+        }
 
         function updateProgress() {
             if (!progressCircle) return;
             const progress = timeLeft / totalTime;
             progressCircle.style.strokeDashoffset = circumference * (1 - progress);
-
-            if (isWorkSession) {
-                progressCircle.style.stroke = "#FF5733";  
-            } else {
-                progressCircle.style.stroke = "#4CAF50"; 
-            }
+            progressCircle.style.stroke = isWorkSession ? "#FF5733" : "#4CAF50";
         }
 
         function updateDisplay() {
-            let minutes = Math.floor(timeLeft / 60);
-            let seconds = timeLeft % 60;
-            document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
+            const minutes = Math.floor(timeLeft / 60);
+            const seconds = timeLeft % 60;
+            document.getElementById("timer").innerText = `${minutes}:${seconds.toString().padStart(2, '0')}`;
             updateProgress();
         }
 
         function startTimer() {
-            // Проверяем, запущен ли уже таймер
-            if (timer) {
+            if (timer) return;
+
+            initTimer();
+            lastTime = Date.now();
+            timer = setTimeout(tick, 1000);
+            toggleButtons(true);
+        }
+
+        function tick() {
+            const now = Date.now();
+            const elapsed = (now - lastTime) / 1000;
+
+            timeLeft = Math.max(0, timeLeft - Math.floor(elapsed));
+            lastTime = now;
+            updateDisplay();
+
+            if (timeLeft <= 0) {
+                handleComplete();
                 return;
             }
 
-            // Если timeLeft не инициализировано (первый запуск) или истекло, устанавливаем начальное значение
-            if (typeof timeLeft === 'undefined' || timeLeft <= 0) {
-                timeLeft = isWorkSession ? workTime * 60 : breakTime * 60;
-                totalTime = timeLeft;
+            timer = setTimeout(tick, 1000);
+        }
+
+        function handleComplete() {
+            clearTimeout(timer);
+            timer = null;
+
+            audio.play().catch(() => {});
+
+            if (isWorkSession) {
+                fetch('/update_streak', { method: 'POST' })
+                    .then(response => response.text())
+                    .then(data => console.log(data));
             }
-
-            function updateTimer() {
-                let minutes = Math.floor(timeLeft / 60);
-                let seconds = timeLeft % 60;
-                document.getElementById("timer").innerText = `${minutes}:${seconds < 10 ? '0' : ''}${seconds}`;
-
-                if (timeLeft <= 0) {
-                    clearInterval(timer);
-                    timer = null;
-
-                    playSound();
-
-                    if (isWorkSession) {
-                        fetch('/update_streak', { method: 'POST' })
-                            .then(response => response.text())
-                            .then(data => console.log(data));
-                    }
-
-                    isWorkSession = !isWorkSession;
-                    timeLeft = isWorkSession ? workTime * 60 : breakTime * 60; // Сбрасываем timeLeft при переключении сессии
-                    totalTime = timeLeft;
-                    startTimer();
-                    return; // Важно выйти из функции, чтобы избежать двойного запуска
-                }
-
-                timeLeft--;
-                updateDisplay();
-            }
-
-            updateTimer();
-            timer = setInterval(updateTimer, 1000);
-
-            document.getElementById('startBtn').disabled = true;
-            document.getElementById('pauseBtn').disabled = false;
-            document.getElementById('resetBtn').disabled = false;
+            isWorkSession = !isWorkSession;
+            initTimer();
+            startTimer();
         }
 
         function pauseTimer() {
-            clearInterval(timer);
+            clearTimeout(timer);
             timer = null;
-            document.getElementById('pauseBtn').textContent = '▶ Resume Timer';
+            document.getElementById('pauseBtn').textContent = '▶ Resume';
             document.getElementById('pauseBtn').onclick = resumeTimer;
         }
 
         function resumeTimer() {
-            document.getElementById('pauseBtn').textContent = '⏸ Pause Timer';
+            lastTime = Date.now();
+            timer = setTimeout(tick, 1000);
+            document.getElementById('pauseBtn').textContent = '⏸ Pause';
             document.getElementById('pauseBtn').onclick = pauseTimer;
-            startTimer();
         }
 
         function resetTimer() {
             fetch('/reset_streak', { method: 'POST' })
                 .then(response => response.text())
                 .then(data => console.log(data));
-            
-            clearInterval(timer);
+            clearTimeout(timer);
             timer = null;
             isWorkSession = true;
-            timeLeft = workTime * 60; // Сбрасываем timeLeft при сбросе таймера
-            totalTime = timeLeft;
-
-            updateDisplay(); // Обновляем отображение времени
-
-            document.getElementById('startBtn').disabled = false;
-            document.getElementById('pauseBtn').disabled = true;
-            document.getElementById('resetBtn').disabled = true;
-            document.getElementById('pauseBtn').textContent = '⏸ Pause Timer';
-            document.getElementById('pauseBtn').onclick = pauseTimer;
-
+            initTimer();
+            toggleButtons(false);
         }
 
-
-        function playSound() {
-            const audio = new Audio('{{ url_for("static", filename="notification_sound.mp3") }}');
-            audio.play();
-            if (Notification.permission === "granted") {
-                new Notification("Pomodoro Timer", {
-                    body: isWorkSession ? "Work session is over!" : "Break is over!"
-                });
-            }
+        function toggleButtons(running) {
+            document.getElementById('startBtn').disabled = running;
+            document.getElementById('pauseBtn').disabled = !running;
+            document.getElementById('resetBtn').disabled = !running;
         }
 
-        document.addEventListener("DOMContentLoaded", function () {
-            if (Notification.permission !== "granted") {
-                Notification.requestPermission();
-            }
+        document.addEventListener("DOMContentLoaded", () => {
+            Notification.requestPermission();
 
             progressCircle = document.querySelector(".progress-ring__progress");
-
-            if (!progressCircle) {
-                console.error("Ошибка: не найден progressCircle!");
-                return;
-            }
-
             const radius = progressCircle.r.baseVal.value;
-            circumference = 2 * Math.PI * radius; // Длина окружности круга (r = 60)
+            circumference = 2 * Math.PI * radius;
             progressCircle.style.strokeDasharray = circumference;
-            progressCircle.style.strokeDashoffset = circumference;
 
-            timeLeft = workTime * 60; // Инициализируем timeLeft при загрузке страницы
-            totalTime = timeLeft;
-            updateDisplay(); // Обновляем отображение времени при загрузке страницы
-
-            document.getElementById('pauseBtn').disabled = true;
-            document.getElementById('resetBtn').disabled = true;
-
-
+            initTimer();
         });
 
         window.addEventListener("beforeunload", function (event) {
@@ -163,7 +129,6 @@
             }
             resetTimer();
         });
-
     </script>
 </head>
 
