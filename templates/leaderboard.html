@@ -2,72 +2,163 @@
 <html lang="en">
 
 <head>
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Leaderboard</title>
+ <link rel="stylesheet"
+  href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+ <meta charset="UTF-8">
+ <meta name="viewport" content="width=device-width, initial-scale=1.0">
+ <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+ <title>Leaderboard</title>
+ <style>
+ .tab {
+  overflow: hidden;
+  border: 1px solid #ccc;
+  background-color: #f1f1f1;
+ }
+
+ .tab button {
+  background-color: inherit;
+  float: left;
+  border: none;
+  outline: none;
+  cursor: pointer;
+  padding: 14px 16px;
+  transition: 0.3s;
+ }
+
+ .tab button:hover {
+  background-color: #ddd;
+ }
+
+ .tab button.active {
+  background-color: #ccc;
+ }
+
+ .tabcontent {
+  display: none;
+  padding: 6px 12px;
+  border: 1px solid #ccc;
+  border-top: none;
+ }
+ </style>
 </head>
 
 <body>
-    {% if session.get('user')%} 
-    <header class="navbar-timer">
-        <div class="logout-section">
-            <a href="{{ url_for('profile') }}">
-                <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
-                    alt="Profile Picture" class="profile-icon">
-            </a>
-            <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
-            <a href="{{ url_for('logout') }}" class="logout-button">
-                <i class="fas fa-door-open"></i> Log out
-            </a>
-        </div>
-    </header>
-    {% else %}
-    <header class="navbar-timer">
-        <div class="logout-section">
-            <a href="{{ url_for('login') }}" class="logout-button">
-                <i class="fas fa-door-closed"></i> Log in
-            </a>
-        </div>
-    </header>
-    {% endif %}
-    <div class="leaderboard">
-        <h2>🏆 Leaderboard</h2>
-        <table>
+ {% if session.get('user')%}
+ <header class="navbar-timer">
+  <div class="logout-section">
+   <a href="{{ url_for('profile') }}">
+    <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
+     alt="Profile Picture" class="profile-icon">
+   </a>
+   <a href="{{ url_for('settings') }}" class="nav-link">Settings</a>
+   <a href="{{ url_for('logout') }}" class="logout-button">
+    <i class="fas fa-door-open"></i> Log out
+   </a>
+  </div>
+ </header>
+ {% else %}
+ <header class="navbar-timer">
+  <div class="logout-section">
+   <a href="{{ url_for('login') }}" class="logout-button">
+    <i class="fas fa-door-closed"></i> Log in
+   </a>
+  </div>
+ </header>
+ {% endif %}
+
+ <div class="leaderboard">
+  <h2>🏆 Leaderboard</h2>
+
+  <div class="tab">
+   <button class="tablinks" onclick="openTab(event, 'Global')">Global</button>
+   <button class="tablinks" onclick="openTab(event, 'Friends')">Friends</button>
+  </div>
+
+  <div id="Global" class="tabcontent">
+   <table>
+    <thead>
+     <tr>
+      <th>🏅 Rank</th>
+      <th>👤 Player</th>
+      <th>⏳ XP</th>
+     </tr>
+    </thead>
+    <tbody id="leaderboard-body">
+     {% for item in users %}
+     <tr>
+      <td>{{ loop.index }}</td>
+      <td class="td_username"><img
+        src="{{ url_for('static', filename='profilePictures/' + item['profile_pic']) }}" class="avatar">
+       {{ item['username'] }}</td>
+      <td>{{item['profile_xp']}}</td>
+     </tr>
+     {% endfor %}
+    </tbody>
+   </table>
+  </div>
+
+  <div id="Friends" class="tabcontent">
+    {% if session.get('user')%}
+        {% if friends %}
+            <table>
             <thead>
-                <tr>
-                    <th>🏅 Rank</th>
-                    <th>👤 Player</th>
-                    <th>⏳ XP</th>
-                </tr>
+            <tr>
+            <th>🏅 Rank</th>
+            <th>👤 Player</th>
+            <th>⏳ XP</th>
+            </tr>
             </thead>
-            <tbody id="leaderboard-body">
-                {% for item in users %}
+            <tbody id="friends-leaderboard-body">
+            {% for friend in friends %}
                 <tr>
                     <td>{{ loop.index }}</td>
                     <td class="td_username"><img
-                            src="{{ url_for('static', filename='profilePictures/' + item['profile_pic']) }}"
-                            class="avatar"> {{ item['username'] }}</td>
-                    <td>{{item['profile_xp']}}</td>
+                        src="{{ url_for('static', filename='profilePictures/' + friend['profile_pic']) }}" class="avatar">
+                    {{ friend['username'] }}</td>
+                    <td>{{friend['profile_xp']}}</td>
                 </tr>
                 {% endfor %}
             </tbody>
-        </table>
-    </div>
+            </table>
+        {% else %}
+            <p style="text-align: center;">It seems you don't have any friends, you can add them using the invite link that you can find in your profile</p>
+        {% endif %}
+    {% else %}
+        <p style="text-align: center;">You need to log in to add friends</p>
+    {% endif %}
+  </div>
+ </div>
 
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-nav">
-                <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
-                <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
-                <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
-                <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
-                <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
-            </div>
-            <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
-        </div>
-    </footer>
+ <footer class="footer">
+  <div class="footer-container">
+   <div class="footer-nav">
+    <a href="{{ url_for('about_us') }}" class="footer-link">About Us</a>
+    <a href="{{ url_for('index') }}" class="footer-link">Timer</a>
+    <a href="{{ url_for('settings') }}" class="footer-link">Settings</a>
+    <a href="{{ url_for('profile') }}" class="footer-link">Profile</a>
+    <a href="{{ url_for('leaderboard') }}" class="footer-link">Leaderboard</a>
+   </div>
+   <p class="footer-text">&copy; 2025 Pomodoro App. All rights reserved.</p>
+  </div>
+ </footer>
+
+ <script>
+ function openTab(evt, tabName) {
+  var i, tabcontent, tablinks;
+  tabcontent = document.getElementsByClassName("tabcontent");
+  for (i = 0; i < tabcontent.length; i++) {
+   tabcontent[i].style.display = "none";
+  }
+  tablinks = document.getElementsByClassName("tablinks");
+  for (i = 0; i < tablinks.length; i++) {
+   tablinks[i].className = tablinks[i].className.replace(" active", "");
+  }
+  document.getElementById(tabName).style.display = "block";
+  evt.currentTarget.className += " active";
+ }
+ 
+ document.getElementsByClassName("tablinks")[0].click();
+ </script>
 </body>
 
 </html>

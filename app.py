@@ -55,6 +55,7 @@ def register():
                                    'about_me': 'Here you can add some information about you',
                                    'profile_stats': {'max_streak': 0, 'champion': False},
                                    'profile_xp': 0,
+                                   'friends': [],
                                    'custom_timer': {'work_time': 30, 'break_time': 5},
                                    'profile_pic': 'defaultProfPic.png'})
         flash('Successfully Registered! Please log in.', 'success')
@@ -195,7 +196,39 @@ def reset_streak():
 @app.route('/leaderboard')
 def leaderboard():
     users = mongo.db.users.find().sort('profile_xp', -1)
-    return render_template('leaderboard.html', users=users)
+    
+    current_user = session.get('user')
+    friends = []
+    if current_user:
+        user_data = mongo.db.users.find_one({'username': current_user})
+        if user_data and 'friends' in user_data:
+            friends = list(mongo.db.users.find(
+                {'username': {'$in': user_data['friends']}}
+            ).sort('profile_xp', -1))
+    return render_template('leaderboard.html', users=users, friends=friends)
+
+@app.route('/add_friend/<string:username_to_add>', methods=['GET'])
+def add_friend(username_to_add):
+    if 'user' not in session:
+        return redirect(url_for('login')) 
+    current_user = session['user']
+    if current_user == username_to_add:
+        error = "You can't add yourself as a friend."
+        return render_template('error_template.html', error=error)
+    user_to_add = mongo.db.users.find_one({'username': username_to_add})
+    if not user_to_add:
+        error = "User to add does not exist."
+        return render_template('error_template.html', error=error)
+    mongo.db.users.update_one(
+        {'username': current_user},
+        {'$addToSet': {'friends': username_to_add}} 
+    )
+    mongo.db.users.update_one(
+        {'username': username_to_add},
+        {'$addToSet': {'friends': current_user}} 
+    )
+
+    return redirect(url_for('profile'))
 
 if __name__ == '__main__':
     app.run(debug=True)

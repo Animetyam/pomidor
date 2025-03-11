@@ -33,7 +33,8 @@
         <h2>Profile</h2>
         <img src="{{ url_for('static', filename='profilePictures/' + session.get('profile_pic', 'default.png')) }}"
             alt="profPic" class="profPic">
-        <p>{{ session.get('about_me') }}</p>
+        <p>{{ session.get('about_me') }}</p>       
+        <p>Here is your invite link: http://127.0.0.1:5000/add_friend/{{session.get('user')}}</p>
         <button type="button" onclick="redirectToProfSettings()">Edit profile</button>
         <form method="POST" class="role_form">
             <label for="role">Select Role:</label>

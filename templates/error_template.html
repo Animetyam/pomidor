@@ -6,21 +6,11 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
-    <title>Pomodoro</title>
-    <script>
-        function redirectIndex(mode) {
-            console.log('Функция вызвана с mode:', mode);
-            const baseUrl = window.location.origin + "{{ url_for('index') }}"; 
-            const url = new URL(baseUrl); 
-            url.searchParams.set('mode', mode); 
-            console.log('Новый URL:', url.href);
-            window.location.href = url.href; 
-        }
-    </script>
-    <script> function redirectSettings() { window.location.href = "{{ url_for('settings') }}"; } </script>
+    <title>About us</title>
 </head>
 
 <body>
+    {% if session.get('user')%} 
     <header class="navbar-timer">
         <div class="logout-section">
             <a href="{{ url_for('profile') }}">
@@ -33,22 +23,18 @@
             </a>
         </div>
     </header>
-    <div class="mode-selection-container">
-        <h2>Select Timer Mode</h2>
-        <div class="mode-cards">
-            <div class="mode-card" onclick="redirectIndex('low')">
-                <h3>Low Energy</h3>
-                <p>For a relaxed, calm session.</p>
-            </div>
-            <div class="mode-card" onclick="redirectIndex('full')">
-                <h3>Full Energy</h3>
-                <p>For a focused, high-energy session.</p>
-            </div>
-            <div class="mode-card" onclick="redirectSettings()">
-                <h3>Custom Timer</h3>
-                <p>For those who create the rules themselves.</p>
-            </div>
+    {% else %}
+    <header class="navbar-timer">
+        <div class="logout-section">
+            <a href="{{ url_for('login') }}" class="logout-button">
+                <i class="fas fa-door-closed"></i> Log in
+            </a>
         </div>
+    </header>
+    {% endif %}
+    <div class="error_op">
+        <img src="{{ url_for('static', filename='error.gif') }}" alt="error">
+        <p>{{error}}</p>
     </div>
     <footer class="footer">
         <div class="footer-container">
